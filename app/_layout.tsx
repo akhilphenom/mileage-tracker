@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { themeColor } from '@/constants/Colors';
+import { themeColor } from '@/constants/colors';
 import { View } from 'react-native';
 import { MileageTrackerIcon } from '@/components/icons/mileage-tracker';
 
