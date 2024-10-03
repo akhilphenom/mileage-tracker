@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Colors } from '@/constants/colors';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '@/hooks/use-color-scheme.hook';
 import { Feather, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {

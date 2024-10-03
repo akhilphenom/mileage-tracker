@@ -3,7 +3,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useColorScheme } from '@/hooks/use-color-scheme.hook';
 import { themeColor } from '@/constants/colors';
 import { View } from 'react-native';
 import { MileageTrackerIcon } from '@/components/icons/mileage-tracker';
