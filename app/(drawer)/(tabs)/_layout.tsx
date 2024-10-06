@@ -6,12 +6,17 @@ import { Feather, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarStyle: { paddingTop: 10 },
+        tabBarStyle: { 
+          paddingTop: 10,
+          height: 60,
+          paddingBottom: 5
+        },
       }}
       >
       <Tabs.Screen

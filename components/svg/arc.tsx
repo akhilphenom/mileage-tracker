@@ -1,7 +1,7 @@
+/* SVGR has dropped some elements not supported by react-native-svg: filter */
+
 import * as React from "react"
 import Svg, { Mask, Path, G, Ellipse, Defs, SvgProps } from "react-native-svg"
-
-/* SVGR has dropped some elements not supported by react-native-svg: filter */
 
 function Arc(props: SvgProps) {
   return (

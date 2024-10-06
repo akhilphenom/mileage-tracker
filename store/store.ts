@@ -1,8 +1,9 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 
 interface Document {
-    _id: string
+    _id: string,
+    __v?: string
 }
 
 export interface IRefuelingRecord extends Document {
@@ -190,7 +191,7 @@ const useStore = create<AppState>()(
         }),
         {
             name: 'vehicle-refueling-storage',
-            getStorage: () => localStorage,
+            storage: createJSONStorage(() => localStorage),
         }
     )
 )

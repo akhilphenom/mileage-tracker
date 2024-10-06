@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme.hook';
 import { themeColor } from '@/constants/colors';
 import { View } from 'react-native';
 import { MileageTrackerIcon } from '@/components/svg/mileage-tracker';
+import { UserProvider } from '@/providers/user.provider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -57,12 +58,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName='(tabs)'>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="(drawer)" options={{ headerShown: false }} /> */}
-        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <UserProvider>
+        <Stack initialRouteName='(drawer)'>
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </UserProvider>
     </ThemeProvider>
   );
 }

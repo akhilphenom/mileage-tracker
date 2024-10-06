@@ -1,20 +1,22 @@
 import useStore, { IUserProfile } from '@/store/store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { nanoid } from 'nanoid'
+import { useRouter } from 'expo-router';
 
 interface UserContextType {
     hasUsers: boolean;
     currentUser: string | null;
     isLoading: boolean;
-    login: (userId: string) => void;
+    login: (user: IUserProfile) => void;
     logout: () => void;
-    addUser: (user: { name: string; nickname: string; email: string; passcode: string }) => void;
+    addUser: (user: IUserProfile) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const store = useStore();
+    const { replace } = useRouter();
     const [isLoading, setIsLoading] = useState(true);
 
     const hasUsers = Object.keys(store.users).length > 0;
@@ -36,6 +38,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout: store.logout,
         addUser,
     };
+
+    useEffect(() => {
+        const checkUserStatus = async () => {
+            setIsLoading(true);
+            if (store.currentUserId) {
+                replace('/(drawer)/(tabs)');
+            } else if (!hasUsers) {
+                replace('/(onboarding)');
+            } else {
+                replace('/(onboarding)/returning');
+            }
+            setIsLoading(false);
+        };
+        checkUserStatus();
+    }, [store.currentUserId, hasUsers]);
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
