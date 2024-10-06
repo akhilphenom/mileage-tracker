@@ -49,6 +49,7 @@ export default function TabLayout() {
         name="vehicles"
         options={{
           title: 'Vehicles',
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => {
             if (focused) {
               return <FontAwesome5 name="motorcycle" size={24} color={color} />

@@ -1,4 +1,4 @@
-import { View, TextInput as Input, useColorScheme, StyleSheet } from 'react-native'
+import { View, TextInput as Input, useColorScheme, StyleSheet, TextInputProps } from 'react-native'
 import React from 'react'
 import { useThemeColor } from '@/hooks/use-theme-color.hook';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,11 +8,12 @@ interface IProps {
     value?: string;
     onChangeText: (text: string) => void;
     style?: any;
-    showWarning: boolean
+    showWarning: boolean,
+    textInputProps?: TextInputProps,
 }
 
 const TextInput = ({
-    placeholder, value, onChangeText, style, showWarning
+    placeholder, value, onChangeText, style, showWarning, textInputProps
 }: IProps) => {
     const colorScheme = useColorScheme();
     const backgroundColor = useThemeColor({}, 'background');
@@ -35,6 +36,7 @@ const TextInput = ({
                     fontSize: 18,
                     ...style,
                 }}
+                {...textInputProps}
             />
             {
                 showWarning ? 

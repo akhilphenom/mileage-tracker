@@ -6,12 +6,14 @@ import { useRouter } from 'expo-router'
 
 interface IProps {
     showBackIcon?: boolean
-    backHandler?: () => void
+    backHandler?: () => void,
+    iconColor?: string
 }
 
 const Header = ({
     showBackIcon = true,
-    backHandler
+    backHandler,
+    iconColor = secondaryColor
 }: IProps) => {
     const router = useRouter();
     const onPress = () => {
@@ -21,12 +23,12 @@ const Header = ({
     return (
         <View style={{
             paddingHorizontal: 10,
-            paddingVertical: 15
+            paddingVertical: 15,
         }}>
             {
                 showBackIcon?
                 <TouchableOpacity onPress={onPress}>
-                    <Ionicons name='arrow-back' size={24} color={secondaryColor}/>
+                    <Ionicons name='arrow-back' size={24} color={iconColor}/>
                 </TouchableOpacity> : null
             }
             <View style={{flex: 1}}></View>

@@ -1,13 +1,10 @@
 import { StyleSheet, View } from 'react-native'
 import React from 'react'
-import EmptyRoad from '@/components/svg/empty-road'
 import MileageTrackerTransparentIcon from '@/components/svg/mileage-tracker-transparent'
 import useStore, { IUserProfile } from '@/store/store'
 import { ThemedText } from '@/components/themed-text'
-import { secondaryColor, themeColor } from '@/constants/colors'
-import { Button } from '@/components/button'
-import { useRouter } from 'expo-router'
-import { AntDesign } from '@expo/vector-icons'
+import { themeColor } from '@/constants/colors'
+import NoVehicles from '../../components/vehicle/no-vehicle'
 
 export default function NoData () {
     const { currentUserId, users } = useStore();
@@ -40,43 +37,10 @@ export default function NoData () {
         )
     }
 
-    const ActivitySection = () => {
-        const router = useRouter();
-        const onClickHandler = () => {
-            router.push('')
-        }
-
-        return (
-            <View style={styles.activityContainer}>
-                <EmptyRoad/>
-                <ThemedText
-                type='subtitle'
-                style={{
-                    fontFamily: 'SourceSansPro-Light',
-                    textAlign: 'center'
-                }}>
-                    Add a vehicle to start tracking its fuelling & performance
-                </ThemedText>
-                <Button 
-                style={{
-                    backgroundColor: secondaryColor,
-                    flexDirection: 'row',
-                    gap: 10
-                }}
-                title={'Add Vehicle'}
-                onPress={onClickHandler} 
-                rightContent={
-                    <AntDesign name="arrowright" size={22} color={'#fff'} />
-                }
-                />
-            </View>
-        )
-    }
-
     return (
         <View style={styles.outerContainer}>
             <WelcomingSection {...user}/>
-            <ActivitySection/>
+            <NoVehicles/>
             <View style={{ flex: 1 }}/>
         </View>
     )

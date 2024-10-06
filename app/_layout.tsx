@@ -61,9 +61,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <UserProvider>
-        <Stack initialRouteName='(drawer)'>
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        <Stack initialRouteName='(drawer)' screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(drawer)"/>
+          <Stack.Screen name="(onboarding)"/>
           <Stack.Screen name="+not-found" />
         </Stack>
       </UserProvider>

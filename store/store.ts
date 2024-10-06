@@ -15,6 +15,14 @@ export interface OnboardingUser {
     passcode?: string;
 }
 
+export type VehicleType = '2-wheeler' | '3-wheeler' | '4-wheeler' | 'other';
+export interface VehicleCreation {
+    name?: string;
+    type?: VehicleType;
+    engineCC?: number;
+    imageUrl?: string | null;
+}
+
 export interface IRefuelingRecord extends Document {
     date: string;
     odometerStart: number;
@@ -23,8 +31,7 @@ export interface IRefuelingRecord extends Document {
     fuelPrice: number;
 }
 
-export interface IVehicle extends Document {
-    name: string;
+export interface IVehicle extends VehicleCreation, Document {
     refuelingRecords: IRefuelingRecord[];
 }
 
@@ -32,23 +39,34 @@ export interface IUserProfile extends OnboardingUser, Document {
     vehicles: IVehicle[];
 }
 
-export interface AppState {
-    currentUserId: string | null;
+interface IUserOnboarding {
     onboardingUser: OnboardingUser | null;
     onboardingStep: number;
-    users: { [userId: string]: IUserProfile };
-    login: (user: IUserProfile) => void;
-    logout: () => void;
-    addUser: (user: IUserProfile) => void;
-    removeUser: (userId: string) => void;
     startOnboarding: () => void;
     updateOnboardingUser: (updates: Partial<OnboardingUser>) => void;
     setOnboardingStep: (step: number) => void;
     completeOnboarding: () => void;
     cancelOnboarding: () => void;
+}
+
+interface IVehicleCreation {
+    vehicleCreation: VehicleCreation | null;
+    startVehicleCreation: () => void;
+    updateVehicleCreation: (updates: Partial<IVehicle>) => void;
+    completeVehicleCreation: () => void;
+    cancelVehicleCreation: () => void;
+}
+
+export interface AppState extends IUserOnboarding, IVehicleCreation {
+    currentUserId: string | null;
+    users: { [userId: string]: IUserProfile };
+    login: (user: IUserProfile) => void;
+    logout: () => void;
+    addUser: (user: IUserProfile) => void;
+    removeUser: (userId: string) => void;
     addVehicle: (vehicle: Omit<IVehicle, 'refuelingRecords'>) => void;
     removeVehicle: (vehicleId: string) => void;
-    addRefuelingRecord: (vehicleId: string, record: Omit<IRefuelingRecord, 'id'>) => void;
+    addRefuelingRecord: (vehicleId: string, record: Omit<IRefuelingRecord, '_id'>) => void;
     editRefuelingRecord: (vehicleId: string, recordId: string, updates: Partial<IRefuelingRecord>) => void;
     deleteRefuelingRecord: (vehicleId: string, recordId: string) => void;
     getVehicleInsights: (vehicleId: string) => {
@@ -65,10 +83,11 @@ const useStore = create<AppState>()(
         (set, get) => ({
             currentUserId: null,
             onboardingUser: null,
+            vehicleCreation: null,
             onboardingStep: 0,
             users: {},
             login: (user: IUserProfile) => {
-                const { _id, name, nickname, email, vehicles } = user;
+                const { _id } = user;
                 if (!get().users[_id]) {
                     get().addUser(user);
                 }
@@ -91,6 +110,35 @@ const useStore = create<AppState>()(
                     currentUserId: state.currentUserId == userId ? null : state.currentUserId
                 };
             }),
+            startVehicleCreation: () => set({ 
+                vehicleCreation: { name: '', type: '2-wheeler', engineCC: 0, imageUrl: null } 
+            }),
+            updateVehicleCreation: (updates) => set((state) => ({
+                vehicleCreation: state.vehicleCreation ? { ...state.vehicleCreation, ...updates } : updates
+            })),
+            completeVehicleCreation: () => {
+                const { vehicleCreation, currentUserId, users } = get();
+                if (vehicleCreation && vehicleCreation.name && vehicleCreation.type && vehicleCreation.engineCC) {
+                    const newVehicle: IVehicle = {
+                        _id: nanoid(),
+                        refuelingRecords: [],
+                        ...vehicleCreation,
+                    };
+                    if (currentUserId) {
+                        set((state) => ({
+                            users: {
+                                ...state.users,
+                                [currentUserId]: {
+                                    ...state.users[currentUserId],
+                                    vehicles: [...state.users[currentUserId].vehicles, newVehicle]
+                                }
+                            },
+                            vehicleCreation: null
+                        }));
+                    }
+                }
+            },
+            cancelVehicleCreation: () => set({ vehicleCreation: null }),
             startOnboarding: () => set({ 
                 onboardingStep: 1,
                 onboardingUser: {
@@ -149,7 +197,7 @@ const useStore = create<AppState>()(
             addRefuelingRecord: (vehicleId, record) => set((state) => {
                 if (!state.currentUserId) return state;
                 const currentUser = state.users[state.currentUserId];
-                const newRecord = { ...record, id: Date.now().toString() };
+                const newRecord = { ...record, _id: nanoid() };
                 return {
                     users: {
                         ...state.users,

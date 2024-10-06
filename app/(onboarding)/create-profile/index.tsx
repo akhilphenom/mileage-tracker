@@ -4,7 +4,7 @@ import ComposedSafeView from '@/components/safe-view-composed';
 import TextInput from '@/components/text-input';
 import { ThemedText as Text } from '@/components/themed-text';
 import { themeColor } from '@/constants/colors';
-import { useOnboarding } from '@/hooks/use-onboarding';
+import { useOnboarding } from '@/hooks/use-onboarding.hook';
 import { validators } from '@/utils/helpers';
 import { Checkbox } from 'expo-checkbox';
 import { useRouter } from 'expo-router';
