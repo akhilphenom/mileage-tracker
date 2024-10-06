@@ -1,11 +1,6 @@
 import { JSX } from 'react';
 import Svg, { Circle, Path } from 'react-native-svg'
 
-/**
- * 
- * @Link https://react-svgr.com/playground/ 
- */
-
 export const MileageTrackerIcon = (props: JSX.IntrinsicAttributes) => {
     return (
         <Svg
