@@ -1,12 +1,12 @@
-import { ThemedText } from '@/components/themed-text';
-import { DrawerToggleButton } from "@react-navigation/drawer";
 import ComposedSafeView from '@/components/safe-view-composed';
+import UserIcon from '@/components/user-icon/user-icon';
+import NoData from '@/app/(home)/no-data';
 
 export default function HomeScreen() {
   return (
     <ComposedSafeView>
-      <DrawerToggleButton></DrawerToggleButton>
-      <ThemedText>Home</ThemedText>
+      <NoData/>
+      <UserIcon/>
     </ComposedSafeView>
   );
 }

@@ -7,7 +7,7 @@ import { themeColor } from '@/constants/colors';
 import { useOnboarding } from '@/hooks/use-onboarding';
 import { validators } from '@/utils/helpers';
 import { Checkbox } from 'expo-checkbox';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
@@ -18,6 +18,7 @@ type Error = {
 }
 
 export default function CreateAccount() {
+    const router = useRouter();
     const { handleCancelOnboarding, handleStartOnboarding, handleUpdateOnboardingUser } = useOnboarding();
     const { validateName, validateEmail } = validators();
 
@@ -29,6 +30,7 @@ export default function CreateAccount() {
 
     const backHandler = useCallback(() => {
         handleCancelOnboarding()
+        router.back();
     }, [])
 
     const validate = () => {
