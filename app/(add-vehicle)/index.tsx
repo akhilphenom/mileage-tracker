@@ -17,7 +17,6 @@ const AddVehicle = () => {
     const router = useRouter();
     const { 
         handleCancelVehicleCreation, 
-        handleCompleteVehicleCreation,
         handleStartVehicleCreation,
         handleUpdateVehicle
     } = useVehicleCreation();
@@ -40,7 +39,9 @@ const AddVehicle = () => {
             name: vehicleName,
             imageUrl: imageBase64
         })
-        setTimeout(() => handleCompleteVehicleCreation(), 500)
+        if(Number(engineCC)>0 && selectedType?.length && vehicleName.trim().length) {
+            router.push('bike-confetti')
+        }
     }
 
     useEffect(() => {
