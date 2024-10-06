@@ -1,10 +1,11 @@
 export const themeColor = '#F55858';
+export const secondaryColor = '#0B3C58';
 const tintColorLight = '#0B3C58';
 const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
+    text: '#0B3C58',
     background: '#fff',
     tint: tintColorLight,
     icon: '#687076',

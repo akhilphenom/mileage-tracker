@@ -5,8 +5,9 @@ import Arc from "@/components/svg/arc";
 import { MileageTrackerIcon } from "@/components/svg/mileage-tracker";
 import { ThemedText } from "@/components/themed-text";
 import { themeColor } from "@/constants/colors";
+import { router } from "expo-router";
 import { useMemo } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 export default function FirstTime() {
     const { width, height } = Dimensions.get('window');
@@ -14,7 +15,7 @@ export default function FirstTime() {
     const ActivitySection = () => {
 
         const onClickHandler = () => {
-            console.log('here')
+            router.push('/create-profile')
         }
 
         return (

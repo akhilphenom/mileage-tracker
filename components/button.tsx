@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { ThemedText, ThemedTextProps } from './themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color.hook';
+import { secondaryColor } from '@/constants/colors';
 
 interface ButtonProps {
   onPress: () => void;
@@ -20,7 +21,11 @@ export function Button({
   textStyle,
   textProps,
 }: ButtonProps) {
-  const backgroundColor = useThemeColor({ light: '#FF4E4E', dark: '#FF9669' }, 'background');
+  const backgroundColor = useThemeColor({ 
+      light: '#FF4E4E', 
+    // light: secondaryColor, 
+    dark: '#FF9669' 
+}, 'background');
   const textColor = useThemeColor({ light: '#FFFFFF', dark: '#000000' }, 'text');
 
   return (
