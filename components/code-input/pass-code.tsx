@@ -38,7 +38,7 @@ export const PassCode = forwardRef<PassCodeRef, {}>((props, ref) => {
     const newCodes = [...codes];
     newCodes[index] = text;
     setCodes(newCodes);
-    
+
     if (text !== "" && index < 3) {
       refs[index + 1]!.current?.focus();
     }

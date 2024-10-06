@@ -8,6 +8,7 @@ import { themeColor } from '@/constants/colors';
 import { View } from 'react-native';
 import { MileageTrackerIcon } from '@/components/svg/mileage-tracker';
 import { UserProvider } from '@/providers/user.provider';
+import { bootCryptoPolyfill } from '@/utils/crypto';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,6 +31,7 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    bootCryptoPolyfill()
     let timeout: NodeJS.Timeout;
     if (fontsLoaded) {
       timeout = setTimeout(() => {

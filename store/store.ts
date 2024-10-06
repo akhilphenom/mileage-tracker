@@ -1,9 +1,18 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { nanoid } from 'nanoid'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Document {
     _id: string,
     __v?: string
+}
+
+export interface OnboardingUser {
+    name?: string;
+    nickname?: string;
+    email?: string;
+    passcode?: string;
 }
 
 export interface IRefuelingRecord extends Document {
@@ -19,21 +28,24 @@ export interface IVehicle extends Document {
     refuelingRecords: IRefuelingRecord[];
 }
 
-export interface IUserProfile extends Document {
-    name: string;
-    nickname: string;
-    email: string;
-    passcode: string;
+export interface IUserProfile extends OnboardingUser, Document {
     vehicles: IVehicle[];
 }
 
 export interface AppState {
     currentUserId: string | null;
+    onboardingUser: OnboardingUser | null;
+    onboardingStep: number;
     users: { [userId: string]: IUserProfile };
     login: (user: IUserProfile) => void;
     logout: () => void;
     addUser: (user: IUserProfile) => void;
     removeUser: (userId: string) => void;
+    startOnboarding: () => void;
+    updateOnboardingUser: (updates: Partial<OnboardingUser>) => void;
+    setOnboardingStep: (step: number) => void;
+    completeOnboarding: () => void;
+    cancelOnboarding: () => void;
     addVehicle: (vehicle: Omit<IVehicle, 'refuelingRecords'>) => void;
     removeVehicle: (vehicleId: string) => void;
     addRefuelingRecord: (vehicleId: string, record: Omit<IRefuelingRecord, 'id'>) => void;
@@ -42,8 +54,8 @@ export interface AppState {
     getVehicleInsights: (vehicleId: string) => {
         avgFuelConsumption: number;
         lastFuelConsumption: number;
-        monthlyExpenses: { 
-            [month: string]: number 
+        monthlyExpenses: {
+            [month: string]: number
         };
     };
 }
@@ -52,6 +64,8 @@ const useStore = create<AppState>()(
     persist(
         (set, get) => ({
             currentUserId: null,
+            onboardingUser: null,
+            onboardingStep: 0,
             users: {},
             login: (user: IUserProfile) => {
                 const { _id, name, nickname, email, vehicles } = user;
@@ -72,11 +86,40 @@ const useStore = create<AppState>()(
             })),
             removeUser: (userId) => set((state) => {
                 const { [userId]: _, ...restUsers } = state.users;
-                return { 
-                    users: restUsers, 
-                    currentUserId: state.currentUserId == userId ? null : state.currentUserId 
+                return {
+                    users: restUsers,
+                    currentUserId: state.currentUserId == userId ? null : state.currentUserId
                 };
             }),
+            startOnboarding: () => set({ 
+                onboardingStep: 1,
+                onboardingUser: {
+                    name: '',
+                    nickname: '',
+                    passcode: '',
+                    email: ''
+                }, 
+            }),
+            updateOnboardingUser: (updates) => set((state) => ({
+                onboardingUser: state.onboardingUser ? { ...state.onboardingUser, ...updates } : updates
+            })),
+            setOnboardingStep: (step) => set({ onboardingStep: step }),
+            completeOnboarding: () => {
+                const { onboardingUser } = get();
+                if (onboardingUser && onboardingUser.email && onboardingUser.name) {
+                    const newUser: IUserProfile = {
+                        _id: nanoid(),
+                        ...onboardingUser,
+                        nickname: onboardingUser.nickname || '',
+                        passcode: onboardingUser.passcode || '',
+                        vehicles: []
+                    };
+                    get().addUser(newUser);
+                    get().login(newUser);
+                    set({ onboardingUser: null, onboardingStep: 0 });
+                }
+            },
+            cancelOnboarding: () => set({ onboardingUser: null, onboardingStep: 0 }),
             addVehicle: (vehicle) => set((state) => {
                 if (!state.currentUserId) return state;
                 const currentUser = state.users[state.currentUserId];
@@ -191,7 +234,7 @@ const useStore = create<AppState>()(
         }),
         {
             name: 'vehicle-refueling-storage',
-            storage: createJSONStorage(() => localStorage),
+            storage: createJSONStorage(() => AsyncStorage),
         }
     )
 )

@@ -3,26 +3,33 @@ import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import ComposedSafeView from "@/components/safe-view-composed";
 import { useRouter } from "expo-router";
 import Header from "@/components/header";
-import { PassCode, PassCodeRef } from "@/components/pass-code";
 import { ThemedText } from "@/components/themed-text";
 import { Button } from "@/components/button";
 import { secondaryColor } from "@/constants/colors";
+import { PassCode, PassCodeRef } from "@/components/code-input/pass-code";
+import { useOnboarding } from "@/hooks/use-onboarding";
 
 export default function SetPass() {
+    const { handleCancelOnboarding, handleUpdateOnboardingUser, handleCompleteOnboarding } = useOnboarding();
+    
     const router = useRouter();
     const firstRef = useRef<PassCodeRef>(null);
     const secondRef = useRef<PassCodeRef>(null);
-    const onSkip = () => {
 
+
+    const onSkip = () => {
+        handleUpdateOnboardingUser({ passcode: '' });
+        handleCompleteOnboarding()
     }
 
     const onSubmit = () => {
-        router.navigate('/')////
-        return;
+        // router.navigate('/')////
+        // return;
         const firstCode = firstRef.current?.getCodes().join("");
         const secondCode = secondRef.current?.getCodes().join("");
         if(firstCode==secondCode) {
-            router.navigate('/')
+            handleUpdateOnboardingUser({ passcode: firstCode })
+            handleCompleteOnboarding()
         } else {
 
         }

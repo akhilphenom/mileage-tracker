@@ -4,10 +4,11 @@ import ComposedSafeView from '@/components/safe-view-composed';
 import TextInput from '@/components/text-input';
 import { ThemedText as Text } from '@/components/themed-text';
 import { themeColor } from '@/constants/colors';
+import { useOnboarding } from '@/hooks/use-onboarding';
 import { validators } from '@/utils/helpers';
 import { Checkbox } from 'expo-checkbox';
 import { router } from 'expo-router';
-import React, { memo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
 type Error = {
@@ -17,6 +18,7 @@ type Error = {
 }
 
 export default function CreateAccount() {
+    const { handleCancelOnboarding, handleStartOnboarding, handleUpdateOnboardingUser } = useOnboarding();
     const { validateName, validateEmail } = validators();
 
     const name = useRef('')
@@ -24,6 +26,10 @@ export default function CreateAccount() {
     const email = useRef('')
 
     const [errors, setErrors] = useState<Error>({ name: '', nickname: '', email: '' });
+
+    const backHandler = useCallback(() => {
+        handleCancelOnboarding()
+    }, [])
 
     const validate = () => {
         const newErrors: Error = {
@@ -80,9 +86,14 @@ export default function CreateAccount() {
         const [isChecked, setIsChecked] = useState(false);
 
         const onSubmit = () => {
-            router.push('create-profile/set-pass-code')////
-            return ////
+            // router.push('create-profile/set-pass-code')////
+            // return ////
             if (validate()) {
+                handleUpdateOnboardingUser({
+                    name: name.current,
+                    nickname: nickname.current,
+                    email: email.current
+                })
                 router.push('create-profile/set-pass-code')
             }
         };
@@ -110,9 +121,13 @@ export default function CreateAccount() {
         )
     })
 
+    useEffect(() => {
+        handleStartOnboarding();
+    }, [])
+
     return (
         <ComposedSafeView header={
-            <Header/>
+            <Header backHandler={backHandler}/>
         }>
             <KeyboardAvoidingView style={styles.container}>
                 <Form />
