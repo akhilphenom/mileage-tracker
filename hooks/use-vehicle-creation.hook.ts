@@ -7,9 +7,11 @@ export const useVehicleCreation = () => {
         updateVehicleCreation,
         completeVehicleCreation,
         cancelVehicleCreation,
+        setSelectedVehicle
     } = useStore();
 
     const handleStartVehicleCreation = () => {
+        setSelectedVehicle(null);
         startVehicleCreation();
     };
 
@@ -19,7 +21,8 @@ export const useVehicleCreation = () => {
 
     const handleCompleteVehicleCreation = () => {
         if (!vehicleCreation || !vehicleCreation.name || !vehicleCreation.type || vehicleCreation.engineCC! <= 0) {
-            throw new Error('Please fill all required fields correctly');
+            // console.log('Please fill all required fields correctly');
+            return;
         }
         completeVehicleCreation();
     };

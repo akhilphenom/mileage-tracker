@@ -3,20 +3,17 @@ import React from 'react';
 import { Colors } from '@/constants/colors';
 import { useColorScheme } from '@/hooks/use-color-scheme.hook';
 import { Feather, FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  // AsyncStorage.clear();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarStyle: { 
-          paddingTop: 10,
-          height: 60,
-          paddingBottom: 5
-        },
       }}
       >
       <Tabs.Screen
@@ -30,6 +27,7 @@ export default function TabLayout() {
         name="refuelling"
         options={{
           title: 'Refuelling',
+          headerShown: true,
           tabBarIcon: ({ color, focused }) => {
             if (focused) {
               return <FontAwesome name="filter" size={24} color={color} />

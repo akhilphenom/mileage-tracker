@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native'
 import React, { useEffect, useRef } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 function Confetti() {
     const confettiRef = useRef<LottieView | null>(null);
@@ -10,14 +10,12 @@ function Confetti() {
         }, 500);
     }, []);
     return (
-        <View>
-            <LottieView
-                ref={confettiRef}
-                source={require('../assets/lottie-files/confetti.json')}
-                style={styles.confetti}
-                loop={false}
-            />
-        </View>
+        <LottieView
+            ref={confettiRef}
+            source={require('../assets/lottie-files/confetti.json')}
+            style={styles.confetti}
+            loop={false}
+        />
     )
 }
 

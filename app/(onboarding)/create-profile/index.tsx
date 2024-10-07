@@ -8,13 +8,21 @@ import { useOnboarding } from '@/hooks/use-onboarding.hook';
 import { validators } from '@/utils/helpers';
 import { Checkbox } from 'expo-checkbox';
 import { useRouter } from 'expo-router';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
-type Error = {
+type FormValues = {
     name: string,
     nickname: string,
     email: string
+}
+
+type Error = FormValues
+interface FooterRef {
+    getCheckboxValue: () => boolean;
+}
+interface FormRef {
+    getFormValues: () => FormValues;
 }
 
 export default function CreateAccount() {
@@ -26,7 +34,17 @@ export default function CreateAccount() {
     const nickname = useRef('')
     const email = useRef('')
 
+    const [formValues, setFormValues] = useState<FormValues>({
+        name: '',
+        nickname: '',
+        email: ''
+    })
+
+    const formRef = useRef<FormRef>();
+    const footerRef = useRef<FooterRef>();
+
     const [errors, setErrors] = useState<Error>({ name: '', nickname: '', email: '' });
+    const [isChecked, setIsChecked] = useState(false);
 
     const backHandler = useCallback(() => {
         handleCancelOnboarding()
@@ -34,62 +52,96 @@ export default function CreateAccount() {
     }, [])
 
     const validate = () => {
+        const values: FormValues = formRef.current?.getFormValues()!
         const newErrors: Error = {
             name: '',
             nickname: '',
             email: ''
         };
 
+        name.current = values.name
+        nickname.current = values.nickname
+        email.current = values.email
+        
         const nameValidation = validateName(name.current)
-        const nicknameValidation = validateName(nickname.current)
+        const nicknameValidation = nickname.current.trim().length ? validateName(nickname.current) : true
         const emailValidation = validateEmail(email.current)
 
-        !nameValidation && (newErrors.name = 'You cannot include symbols or numbers in Name');
+        !nameValidation && (
+            newErrors.name = name.current.trim().length ? 
+                            'You cannot include symbols or numbers in Name' :
+                            'Name cannot be empty'
+        );
         !nicknameValidation && (newErrors.nickname = 'You cannot include symbols or numbers in Nick Name');
         !emailValidation && (newErrors.email = 'Invalid Email');
 
         setErrors(newErrors);
+        setFormValues({
+            name: name.current,
+            nickname: nickname.current,
+            email: email.current
+        })
+        setIsChecked(footerRef.current?.getCheckboxValue()!)
 
         return nameValidation && nicknameValidation && emailValidation;
     };
 
-    const Form = () => (
-        <View style={{
-            margin: 20,
-        }}>
-            <Text type='subtitle'>Create Account</Text>
-            <TextInput
-                placeholder="Name *"
-                onChangeText={e => name.current = e}
-                style={styles.input}
-                showWarning={!!errors['name'].length}
-            />
-            {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
+    const Form = forwardRef(({ formValues, errors }: { formValues: FormValues, errors: FormValues }, ref) => {
+        const [name, setName] = useState(formValues.name);
+        const [nickname, setNickname] = useState(formValues.nickname);
+        const [email, setEmail] = useState(formValues.email);
+        
+        useImperativeHandle(ref, () => ({
+            getFormValues: () => ({ name, nickname, email })
+        }))
 
-            <TextInput
-                placeholder="Nickname"
-                onChangeText={e => nickname.current = e}
-                style={styles.input}
-                showWarning={!!errors['nickname'].length}
-            />
-            {errors.nickname ? <Text style={styles.error}>{errors.nickname}</Text> : null}
+        return (
+            <View style={styles.form}>
+                <Text type='subtitle'>Create Account</Text>
+                <View>
+                    <TextInput
+                        placeholder="Name *"
+                        value={name}
+                        onChangeText={setName}
+                        style={styles.input}
+                        showWarning={!!errors['name'].length}
+                    />
+                    {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
+                </View>
+    
+                <View>
+                    <TextInput
+                        placeholder="Nickname"
+                        value={nickname}
+                        onChangeText={setNickname}
+                        style={styles.input}
+                        showWarning={!!errors['nickname'].length}
+                    />
+                    {errors.nickname ? <Text style={styles.error}>{errors.nickname}</Text> : null}
+                </View>
+    
+                <View>
+                    <TextInput
+                        placeholder="Email *"
+                        value={email}
+                        onChangeText={setEmail}
+                        style={styles.input}
+                        showWarning={!!errors['email'].length}
+                    />
+                    {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
+                </View>
+            </View>
+        )
+    })
 
-            <TextInput
-                placeholder="Email *"
-                onChangeText={e => email.current = e}
-                style={styles.input}
-                showWarning={!!errors['email'].length}
-            />
-            {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
-        </View>
-    )
+    const Footer = forwardRef(({ checked }: { checked: boolean }, ref) => {
+        const [isChecked, setIsChecked] = useState(checked);
 
-    const Footer = memo(() => {
-        const [isChecked, setIsChecked] = useState(false);
+        useImperativeHandle(ref, () => ({
+            getCheckboxValue: () => isChecked
+        }))
 
         const onSubmit = () => {
-            // router.push('create-profile/set-pass-code')////
-            // return ////
             if (validate()) {
                 handleUpdateOnboardingUser({
                     name: name.current,
@@ -132,9 +184,9 @@ export default function CreateAccount() {
             <Header backHandler={backHandler}/>
         }>
             <KeyboardAvoidingView style={styles.container}>
-                <Form />
+                <Form ref={formRef} formValues={formValues} errors={errors}/>
                 <View style={{ flex: 1 }} />
-                <Footer />
+                <Footer ref={footerRef} checked={isChecked}/>
             </KeyboardAvoidingView>
         </ComposedSafeView>
     );
@@ -159,4 +211,8 @@ const styles = StyleSheet.create({
         margin: 10
     },
     checkboxLabel: { marginLeft: 8 },
+    form: {
+        margin: 20,
+        gap: 40
+    }
 });

@@ -32,7 +32,7 @@ const AddVehicle = () => {
     }
 
     const onSaveHandler = async () => {
-        const { imageBase64, engineCC, selectedType, vehicleName } = vehicleActions.current!?.getVehicleData()
+        const { imageBase64, engineCC, selectedType, vehicleName } = vehicleActions.current!.getVehicleData()
         handleUpdateVehicle({
             engineCC: Number(engineCC), 
             type: selectedType,

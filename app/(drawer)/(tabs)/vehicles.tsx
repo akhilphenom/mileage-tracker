@@ -7,7 +7,7 @@ import { FlatList, View } from 'react-native'
 
 function Vehicles() {
   const conditionalRender = () => {
-    const { users, currentUserId, getVehicleInsights } = useStore()
+    const { users, currentUserId } = useStore()
     const { vehicles } = users[currentUserId!];
     if (!vehicles.length) {
       return <NoVehicles />;
@@ -15,7 +15,7 @@ function Vehicles() {
       return (
         <>
           <FlatList
-            data={vehicles}
+            data={[...vehicles].reverse()}
             style={{ flex: 1 }}
             renderItem={({ item }) => (
               <VehicleCardItem {...item} />

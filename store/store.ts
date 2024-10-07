@@ -55,10 +55,12 @@ interface IVehicleCreation {
     updateVehicleCreation: (updates: Partial<IVehicle>) => void;
     completeVehicleCreation: () => void;
     cancelVehicleCreation: () => void;
+    setSelectedVehicle: (vehicleId: string | null) => void
 }
 
 export interface AppState extends IUserOnboarding, IVehicleCreation {
     currentUserId: string | null;
+    currentSelectedVehicle: string | null;
     users: { [userId: string]: IUserProfile };
     login: (user: IUserProfile) => void;
     logout: () => void;
@@ -82,6 +84,7 @@ const useStore = create<AppState>()(
     persist(
         (set, get) => ({
             currentUserId: null,
+            currentSelectedVehicle: null,
             onboardingUser: null,
             vehicleCreation: null,
             onboardingStep: 0,
@@ -133,12 +136,14 @@ const useStore = create<AppState>()(
                                     vehicles: [...state.users[currentUserId].vehicles, newVehicle]
                                 }
                             },
-                            vehicleCreation: null
+                            vehicleCreation: null,
+                            currentSelectedVehicle: newVehicle._id
                         }));
                     }
                 }
             },
             cancelVehicleCreation: () => set({ vehicleCreation: null }),
+            setSelectedVehicle: (vehicle: string | null) => set({ currentSelectedVehicle: vehicle }), 
             startOnboarding: () => set({ 
                 onboardingStep: 1,
                 onboardingUser: {

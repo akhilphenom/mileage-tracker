@@ -26,7 +26,8 @@
       "expo-asset",
       {
         "assets": [
-          "./assets/images/mileage-tracker-logo.svg"
+          "./assets/images/mileage-tracker-logo.svg",
+          "./assets/images/placeholder.png"
         ]
       }
     ],

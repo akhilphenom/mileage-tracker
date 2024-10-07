@@ -22,7 +22,7 @@ const VehicleActions = forwardRef<VehicleActionsRef, {}>((props, ref) => {
         { label: 'Other', value: 'other' },
     ]
     const imagePickerRef = useRef<ImagePickerRef>(null);
-    const [selectedType, setSelectedType] = useState<VehicleType>()
+    const [selectedType, setSelectedType] = useState<VehicleType>('2-wheeler')
     const vehicleName = useRef<string>('');
     const engineCC = useRef<string>('');
 
