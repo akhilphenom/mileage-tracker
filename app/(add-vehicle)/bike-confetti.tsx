@@ -7,11 +7,13 @@ import { BackHandler, Dimensions, Image, StyleSheet, View } from 'react-native';
 import Arc from '@/components/svg/arc';
 import useStore, { IVehicle } from '@/store/store';
 import { ImageBackground } from 'expo-image';
-import PlaceholderImage from '../../assets/images/placeholder.png';
+import BikePlaceholderImage from '../../assets/images/bike-placeholder.png';
+import CarPlaceholderImage from '../../assets/images/car-placeholder.png';
 import Header from '@/components/header';
 import { useRouter } from 'expo-router';
 
-const PLACEHOLDER_IMAGE = Image.resolveAssetSource(PlaceholderImage).uri;
+const BIKE_PLACEHOLDER_IMAGE = Image.resolveAssetSource(BikePlaceholderImage).uri;
+const CAR_PLACEHOLDER_IMAGE = Image.resolveAssetSource(CarPlaceholderImage).uri;
 
 const BikeConfetti = () => {
     const { handleCompleteVehicleCreation, handleCancelVehicleCreation } = useVehicleCreation()
@@ -70,7 +72,10 @@ const BikeConfetti = () => {
                             imageStyle={styles.circle}
                             /> :
                             <Image 
-                            source={{ uri: PLACEHOLDER_IMAGE }} 
+                            source={{ 
+                                uri: currentVehicle.type == '2-wheeler' ? 
+                                    BIKE_PLACEHOLDER_IMAGE : CAR_PLACEHOLDER_IMAGE
+                            }} 
                             style={styles.circle}
                             /> 
                         }

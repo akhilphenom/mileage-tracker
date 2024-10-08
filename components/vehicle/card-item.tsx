@@ -2,6 +2,7 @@ import { ImageBackground, View, StyleSheet } from 'react-native'
 import React from 'react'
 import { IVehicle } from '../../store/store'
 import { ThemedText } from '../themed-text'
+import { shadow } from '@/constants/styles'
 
 const VehicleCardItem = ({
     name, engineCC, imageUrl, type
@@ -54,17 +55,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         alignItems: 'center',
     },
-    shadow: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-
-        elevation: 3,
-    }
+    shadow
 })
 
 export default VehicleCardItem

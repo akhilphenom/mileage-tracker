@@ -39,11 +39,14 @@ export default function CreateAccount() {
         nickname: '',
         email: ''
     })
+    const [errors, setErrors] = useState<Error>({ 
+        name: '', 
+        nickname: '', 
+        email: '' 
+    });
 
-    const formRef = useRef<FormRef>();
-    const footerRef = useRef<FooterRef>();
-
-    const [errors, setErrors] = useState<Error>({ name: '', nickname: '', email: '' });
+    const formRef = useRef<FormRef>(null);
+    const footerRef = useRef<FooterRef>(null);
     const [isChecked, setIsChecked] = useState(false);
 
     const backHandler = useCallback(() => {
@@ -86,7 +89,10 @@ export default function CreateAccount() {
         return nameValidation && nicknameValidation && emailValidation;
     };
 
-    const Form = forwardRef(({ formValues, errors }: { formValues: FormValues, errors: FormValues }, ref) => {
+    const Form = forwardRef((
+        { formValues, errors }: { formValues: FormValues, errors: FormValues }, 
+        ref: React.ForwardedRef<FormRef>
+    ) => {
         const [name, setName] = useState(formValues.name);
         const [nickname, setNickname] = useState(formValues.nickname);
         const [email, setEmail] = useState(formValues.email);
@@ -134,7 +140,10 @@ export default function CreateAccount() {
         )
     })
 
-    const Footer = forwardRef(({ checked }: { checked: boolean }, ref) => {
+    const Footer = forwardRef((
+        { checked }: { checked: boolean }, 
+        ref: React.ForwardedRef<FooterRef>
+    ) => {
         const [isChecked, setIsChecked] = useState(checked);
 
         useImperativeHandle(ref, () => ({

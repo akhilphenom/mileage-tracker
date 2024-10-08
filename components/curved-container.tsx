@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native'
 import React from 'react'
 import { themeColor } from '@/constants/colors'
-import Header from '../header'
+import Header from './header'
 
 interface IProps {
   children: JSX.Element,

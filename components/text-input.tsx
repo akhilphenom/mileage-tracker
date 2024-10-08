@@ -1,4 +1,4 @@
-import { View, TextInput as Input, useColorScheme, StyleSheet, TextInputProps } from 'react-native'
+import { View, TextInput as Input, useColorScheme, StyleSheet, TextInputProps, ViewStyle } from 'react-native'
 import React from 'react'
 import { useThemeColor } from '@/hooks/use-theme-color.hook';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,12 +8,13 @@ interface IProps {
     value?: string;
     onChangeText: (text: string) => void;
     style?: any;
+    containerStyle?: ViewStyle,
     showWarning: boolean,
     textInputProps?: TextInputProps,
 }
 
 const TextInput = ({
-    placeholder, value, onChangeText, style, showWarning, textInputProps
+    placeholder, value, onChangeText, style, showWarning, textInputProps, containerStyle
 }: IProps) => {
     const colorScheme = useColorScheme();
     const backgroundColor = useThemeColor({}, 'background');
@@ -22,7 +23,8 @@ const TextInput = ({
     return (
         <View style={[
             styles.wrapper,
-            { backgroundColor }
+            { backgroundColor },
+            containerStyle
         ]}>
             <Input
                 placeholder={placeholder}

@@ -1,49 +1,34 @@
-import PopOver from '@/components/vehicle/add-popover';
-import VehicleCardItem from '@/components/vehicle/card-item';
+import NoRefuellingRecords from '@/components/refuelling/no-refuelling-records';
+import RefuelledRecords from '@/components/refuelling/refuelled-records';
 import NoVehicles from '@/components/vehicle/no-vehicle';
-import useStore, { IRefuelingRecord } from '@/store/store';
-import { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import useStore from '@/store/store';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 export default function Refuelling() {
 
-  const conditionalRender = () => {
-    const { users, currentUserId, currentSelectedVehicle } = useStore()
+  const ConditionalRender = () => {
+    const { users, currentUserId, currentSelectedVehicle, setSelectedVehicle } = useStore()
     const { vehicles } = users[currentUserId!];
-    const [refuellingRecords, setRefuellingRecords] = useState<IRefuelingRecord[]>([]);
 
     useEffect(() => {
-      if(currentSelectedVehicle) {
-        const vehicle = vehicles.find(({_id}) => currentSelectedVehicle)
-        console.log(vehicle)
-        setRefuellingRecords(vehicle?.refuelingRecords!)
+      if (!currentSelectedVehicle && vehicles.length) {
+        setSelectedVehicle(vehicles[0]._id)
       }
-    }, [currentSelectedVehicle])
+    }, [currentSelectedVehicle, vehicles])
 
-    if (!vehicles.length) {
+    if (!vehicles?.length) {
       return <NoVehicles />;
     } else if (!currentSelectedVehicle) {
-      
+      return <NoRefuellingRecords />
     } else {
-      return (
-        <>
-          <FlatList
-            data={[...vehicles].reverse()}
-            style={{ flex: 1 }}
-            renderItem={({ item }) => (
-              <VehicleCardItem {...item} />
-            )}
-            ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
-          />
-          <PopOver />
-        </>
-      )
-    }  
+      return <RefuelledRecords />
+    }
   }
 
   return (
     <View style={{ flex: 1, justifyContent: 'flex-start' }}>
-      {conditionalRender()}
+      <ConditionalRender />
     </View>
   )
 }

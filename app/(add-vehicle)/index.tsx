@@ -1,15 +1,15 @@
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native'
 import React, { useEffect, useRef } from 'react'
-import { secondaryColor, themeColor } from '@/constants/colors';
+import { themeColor } from '@/constants/colors';
 import { useStatusBar } from '@/hooks/use-statusbar.hook';
 import { StatusBar } from 'expo-status-bar';
-import CurvedContainer from '@/components/vehicle/curved-container';
+import CurvedContainer from '@/components/curved-container';
 import { ThemedText } from '@/components/themed-text';
 import SafeView from '@/components/safe-view';
 import { useRouter } from 'expo-router';
 import VehicleActions, { VehicleActionsRef } from '../../components/vehicle/actions'
-import { Button } from '@/components/button';
 import { useVehicleCreation } from '@/hooks/use-vehicle-creation.hook';
+import ActionButtons from '@/components/action-buttons';
 
 const AddVehicle = () => {
     useStatusBar('default');
@@ -64,30 +64,10 @@ const AddVehicle = () => {
                             </ThemedText>
                             <VehicleActions ref={vehicleActions}/>
                         </View>
-                        <View style={styles.footer}>
-                            <Button 
-                            onPress={onCancelHandler} 
-                            title={'Cancel'} 
-                            style={{
-                                backgroundColor: '#fff',
-                                borderColor: secondaryColor,
-                                borderRadius: 8,
-                                borderWidth: 1,
-                                flex: 1
-                            }}
-                            textStyle={{
-                                color: secondaryColor
-                            }}
-                            />
-                            <Button 
-                            onPress={onSaveHandler} 
-                            title={'Add'} 
-                            style={{
-                                backgroundColor: secondaryColor,
-                                flex: 1
-                            }}
-                            />
-                        </View>
+                        <ActionButtons 
+                        onSaveHandler={onSaveHandler}
+                        onCancelHandler={onCancelHandler}
+                        />
                     </KeyboardAvoidingView>
                 </CurvedContainer>
             </SafeView>

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { nanoid } from 'nanoid'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 interface Document {
     _id: string,
@@ -24,7 +25,7 @@ export interface VehicleCreation {
 }
 
 export interface IRefuelingRecord extends Document {
-    date: string;
+    date: Date;
     odometerStart: number;
     odometerEnd: number;
     fuelConsumed: number;
@@ -61,6 +62,7 @@ interface IVehicleCreation {
 export interface AppState extends IUserOnboarding, IVehicleCreation {
     currentUserId: string | null;
     currentSelectedVehicle: string | null;
+    currentRefuellingRecord: string | null;
     users: { [userId: string]: IUserProfile };
     login: (user: IUserProfile) => void;
     logout: () => void;
@@ -68,6 +70,7 @@ export interface AppState extends IUserOnboarding, IVehicleCreation {
     removeUser: (userId: string) => void;
     addVehicle: (vehicle: Omit<IVehicle, 'refuelingRecords'>) => void;
     removeVehicle: (vehicleId: string) => void;
+    setSelectedRefuellingRecord: (refuellingRecordId: string | null) => void
     addRefuelingRecord: (vehicleId: string, record: Omit<IRefuelingRecord, '_id'>) => void;
     editRefuelingRecord: (vehicleId: string, recordId: string, updates: Partial<IRefuelingRecord>) => void;
     deleteRefuelingRecord: (vehicleId: string, recordId: string) => void;
@@ -85,6 +88,7 @@ const useStore = create<AppState>()(
         (set, get) => ({
             currentUserId: null,
             currentSelectedVehicle: null,
+            currentRefuellingRecord: null,
             onboardingUser: null,
             vehicleCreation: null,
             onboardingStep: 0,
@@ -199,6 +203,7 @@ const useStore = create<AppState>()(
                     }
                 };
             }),
+            setSelectedRefuellingRecord: (refuellingRecord: string | null) => set({ currentRefuellingRecord: refuellingRecord }), 
             addRefuelingRecord: (vehicleId, record) => set((state) => {
                 if (!state.currentUserId) return state;
                 const currentUser = state.users[state.currentUserId];
@@ -244,6 +249,7 @@ const useStore = create<AppState>()(
                     return state;
                 }
                 const currentUser = state.users[state.currentUserId];
+                set({ currentRefuellingRecord: null });
                 return {
                     users: {
                         ...state.users,
@@ -278,7 +284,7 @@ const useStore = create<AppState>()(
 
                 const monthlyExpenses: { [month: string]: number } = {};
                 records.forEach(r => {
-                    const month = r.date.slice(0, 7); // YYYY-MM
+                    const month = moment(r.date).format('YYYY-MM');
                     monthlyExpenses[month] = (monthlyExpenses[month] || 0) + (r.fuelConsumed * r.fuelPrice);
                 });
 
