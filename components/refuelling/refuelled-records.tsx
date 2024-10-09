@@ -40,8 +40,8 @@ const RefuelledRecords = () => {
 
         const onFilterChange = (value: DateFilter) => {
             setFilter(value);
-            if(typeof value == 'number') {
-                setRefuellingRecords(filterDatesLastNDays(records, value))
+            if(isFinite(Number(value)) && typeof Number(value) == 'number') {
+                setRefuellingRecords(filterDatesLastNDays(records, Number(value)))
             } else {
                 setRefuellingRecords([...records].sort((a, b) => moment(b.date).diff(moment(a.date))))
             }

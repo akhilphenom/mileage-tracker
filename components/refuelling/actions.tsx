@@ -19,13 +19,14 @@ export interface RefuellingActionsRef {
 }
 
 const RefuellingRecordActions = forwardRef((
-    { formValues, errors }: { formValues: RefuellingFormValues, errors: RefuellingFormValues },
+    { formValues, errors, mode }: { formValues: RefuellingFormValues, errors: RefuellingFormValues, mode: 'add' | 'edit' },
     ref: React.ForwardedRef<RefuellingActionsRef>
 ) => {
     const { users, currentUserId, currentSelectedVehicle, setSelectedVehicle: setCurrentSelectedVehicle } = useStore()
     const { vehicles } = users[currentUserId!];
 
     const [selectedVehicle, setSelectedVehicle] = useState<IVehicle['_id']>(currentSelectedVehicle ?? vehicles[0]?._id);
+    const [currentVehicleName, setCurrentVehicleName] = useState<string | null>(null);
     const pickerValues = vehicles.map(item => ({
         label: item.name,
         value: item._id
@@ -58,6 +59,13 @@ const RefuellingRecordActions = forwardRef((
     }));
 
     useEffect(() => {
+        if(currentSelectedVehicle) {
+            const { name } = vehicles.find(({ _id }) => currentSelectedVehicle == _id)!
+            setCurrentVehicleName(name!)
+        }
+    }, [currentSelectedVehicle])
+
+    useEffect(() => {
         if(!currentSelectedVehicle) {
             setCurrentSelectedVehicle(vehicles[0]._id)
         }
@@ -69,16 +77,23 @@ const RefuellingRecordActions = forwardRef((
                 <ThemedText style={{ marginVertical: 'auto', flex: 1, textAlign: 'right' }}>
                     Vehicle Name:
                 </ThemedText>
-                <Picker
-                    style={styles.pickerContainer}
-                    selectedValue={selectedVehicle}
-                    onValueChange={onVehicleChange}>
-                    {
-                        pickerValues.map(({ label, value }) => (
-                            <Picker.Item label={label} value={value} key={value} />
-                        ))
-                    }
-                </Picker>
+                {
+                    mode == 'add' ?
+                    <Picker
+                        enabled={mode == 'add'} //didn't work in ios
+                        style={styles.pickerContainer}
+                        selectedValue={selectedVehicle}
+                        onValueChange={onVehicleChange}>
+                        {
+                            pickerValues.map(({ label, value }) => (
+                                <Picker.Item label={label} value={value} key={value} />
+                            ))
+                        }
+                    </Picker> : 
+                    <View style={{flex: 1}}>
+                        <ThemedText>{currentVehicleName}</ThemedText>
+                    </View>
+                }
             </View>
             <View style={styles.row}>
                 <ThemedText style={{

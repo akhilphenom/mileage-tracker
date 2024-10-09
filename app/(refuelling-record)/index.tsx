@@ -26,8 +26,6 @@ const ModifyRefuellingRecord = ({
     const params = useLocalSearchParams();
     params?.mode && (mode = params.mode as RefuellingMode)
 
-    console.log(params)
-
     const { 
         users, currentUserId,
         currentSelectedVehicle, currentRefuellingRecord, 
@@ -130,7 +128,7 @@ const ModifyRefuellingRecord = ({
                                 {mode == 'add'? 'Add': 'Edit'} Refuelling Record
                             </ThemedText>
                             <View style={styles.refuellingInputsContainer}>
-                                <RefuellingRecordActions ref={refuellingRecordRef} formValues={formValues} errors={errors}/>
+                                <RefuellingRecordActions mode={mode} ref={refuellingRecordRef} formValues={formValues} errors={errors}/>
                             </View>
                         </View>
                         <ActionButtons 

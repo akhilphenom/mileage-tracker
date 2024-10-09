@@ -13,8 +13,8 @@ const HistoryCard = ({
     const formattedDate = moment(date).format("ddd, DD MMM 'YY");
     
     const onPressHandler = () => {
-        router.setParams({ mode: 'edit' })
         router.push('(refuelling-record)');
+        router.setParams({ mode: 'edit' })
     }
 
     return (

@@ -7,16 +7,16 @@ import { StyleSheet, View } from 'react-native';
 
 export default function Refuelling() {
 
+  const { users, currentUserId, currentSelectedVehicle, setSelectedVehicle } = useStore()
+  const { vehicles } = users[currentUserId!];
+
+  useEffect(() => {
+    if (!currentSelectedVehicle && vehicles.length) {
+      setSelectedVehicle(vehicles[0]._id)
+    }
+  }, [currentSelectedVehicle, vehicles])
+
   const ConditionalRender = () => {
-    const { users, currentUserId, currentSelectedVehicle, setSelectedVehicle } = useStore()
-    const { vehicles } = users[currentUserId!];
-
-    useEffect(() => {
-      if (!currentSelectedVehicle && vehicles.length) {
-        setSelectedVehicle(vehicles[0]._id)
-      }
-    }, [currentSelectedVehicle, vehicles])
-
     if (!vehicles?.length) {
       return <NoVehicles />;
     } else if (!currentSelectedVehicle) {
@@ -27,12 +27,15 @@ export default function Refuelling() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+    <View style={styles.container}>
       <ConditionalRender />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-
+  container: { 
+    flex: 1, 
+    justifyContent: 'flex-start' 
+  }
 });
