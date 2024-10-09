@@ -1,13 +1,13 @@
 import { View, StyleSheet } from 'react-native'
 import React, { memo, useEffect, useState } from 'react'
 import PopOver from './popover'
-import useStore, { IRefuelingRecord, IVehicle } from '@/store/store'
+import useStore, { IRefuelingRecord } from '@/store/store'
 import { ThemedText } from '../themed-text'
 import { Picker } from '@react-native-picker/picker'
-import { shadow } from '@/constants/styles'
 import NoRefuellingRecords from './no-refuelling-records'
 import RefuellingHistory from './refuelling-history'
 import moment from 'moment'
+import { VehicleChanger } from '../vehicle/vehicle-changer'
 
 type DateFilter = 'all-time' | 30 | 45 | 60
 
@@ -79,33 +79,6 @@ const RefuelledRecords = () => {
             </View>
         )
     })
-    
-    const VehicleChanger = () => {
-        const [selectedVehicle, setSelectedVehicle] = useState<IVehicle['_id']>(currentSelectedVehicle ?? vehicles[0]?._id);
-        const pickerValues = vehicles.map(item => ({
-            label: item.name,
-            value: item._id
-        }))
-
-        const onVehicleChange = (vehicle: IVehicle['_id']) => {
-            setSelectedVehicle(vehicle)
-            setCurrentSelectedVehicle(vehicle)
-        }
-        
-        return (
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={selectedVehicle}
-                    onValueChange={onVehicleChange}>
-                    {
-                        pickerValues.map(({ label, value }) => (
-                            <Picker.Item label={label} value={value} key={value} />
-                        ))
-                    }
-                </Picker>
-            </View>
-        )
-    }
 
     useEffect(() => {
         const vehicle = vehicles.find(({ _id }) => currentSelectedVehicle == _id)!
@@ -122,12 +95,6 @@ const RefuelledRecords = () => {
 }
 
 const styles = StyleSheet.create({
-    pickerContainer: {
-        justifyContent: 'center',
-        width: '100%',
-        backgroundColor: 'white',
-        ...shadow
-    },
     container: {
         flex: 1,
         padding: 20
