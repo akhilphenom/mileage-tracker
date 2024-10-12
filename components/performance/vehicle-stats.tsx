@@ -10,8 +10,6 @@ const VehicleStats = () => {
     const { width, height } = Dimensions.get('screen')
     const { users, currentUserId, currentSelectedVehicle } = useStore()
     const { vehicles } = users[currentUserId!];
-    
-
 
     return (
         <View style={styles.container}>
@@ -24,13 +22,14 @@ const VehicleStats = () => {
             showsVerticalScrollIndicator={false}
             >
                 <View style={styles.scrollViewItem}>
-                    <ThemedText type='subtitle'>
+                    <ThemedText type='subtitle' style={styles.textStyle}>
                         Money spent on Fuel
                     </ThemedText>
-                    <Expenses width={width} height={280}/>
+                    <Expenses width={width-60} height={200}/>
                 </View>
+                <View style={{height: 30}}></View>
                 <View style={styles.scrollViewItem}>
-                    <ThemedText type='subtitle'>
+                    <ThemedText type='subtitle' style={styles.textStyle}>
                         Vehicle Mileage Performance
                     </ThemedText>
                     <VehicleMileagePerformance width={width} height={280}/>
@@ -49,14 +48,16 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     scrollView: {
-        flex: 1,
-        paddingHorizontal: 30,
         width: '100%',
     },
     scrollViewItem: {
         width: '100%',
         gap: 10,
-        alignItems: 'center'
+        alignItems: 'center',
+    },
+    textStyle: {
+        width: '100%',
+        textAlign: 'left'
     }
 })
 

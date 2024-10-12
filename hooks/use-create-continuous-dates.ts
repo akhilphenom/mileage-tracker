@@ -1,7 +1,11 @@
-import { Expenses } from "@/components/performance/expenses";
 import moment from "moment";
 
-export const useSeriesForExpenses = (monthlyExpenses: { [key: string]: number }) => {
+export type ChartData = {
+    labels: string[],
+    datasets: { data: number[] }[]
+};
+
+export const useSeries = (monthlyExpenses: { [key: string]: number }): ChartData => {
     const createContinuousMonthSeries = (startDate: string, endDate: string) => {
         let current = moment(startDate).startOf('month');
         const end = moment(endDate).endOf('month');
@@ -24,7 +28,7 @@ export const useSeriesForExpenses = (monthlyExpenses: { [key: string]: number })
         ...monthlyExpenses
     };
 
-    const orderedChartData: Expenses = {
+    const orderedChartData: ChartData = {
         labels: [],
         datasets: [{ data: [] }]
     };
@@ -36,5 +40,5 @@ export const useSeriesForExpenses = (monthlyExpenses: { [key: string]: number })
             orderedChartData.datasets[0].data.push(continuousData[key]);
         });
 
-    return orderedChartData
+    return orderedChartData;
 }

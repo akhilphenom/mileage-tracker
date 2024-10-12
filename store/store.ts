@@ -80,6 +80,9 @@ export interface AppState extends IUserOnboarding, IVehicleCreation {
         monthlyExpenses: {
             [month: string]: number
         };
+        monthlyMileage: {
+            [month: string]: number
+        }
     };
 }
 
@@ -269,9 +272,9 @@ const useStore = create<AppState>()(
             }),
             getVehicleInsights: (vehicleId) => {
                 const state = get();
-                if (!state.currentUserId) return { avgFuelConsumption: 0, lastFuelConsumption: 0, monthlyExpenses: {} };
+                if (!state.currentUserId) return { avgFuelConsumption: 0, lastFuelConsumption: 0, monthlyExpenses: {}, monthlyMileage: {} };
                 const vehicle = state.users[state.currentUserId].vehicles.find(v => v._id === vehicleId);
-                if (!vehicle) return { avgFuelConsumption: 0, lastFuelConsumption: 0, monthlyExpenses: {} };
+                if (!vehicle) return { avgFuelConsumption: 0, lastFuelConsumption: 0, monthlyExpenses: {}, monthlyMileage: {} };
 
                 const records = vehicle.refuelingRecords;
                 const totalDistance = records.reduce((sum, r) => sum + (r.odometerEnd - r.odometerStart), 0);
@@ -283,12 +286,22 @@ const useStore = create<AppState>()(
                     : 0;
 
                 const monthlyExpenses: { [month: string]: number } = {};
+                const monthlyMileage: { [month: string]: number } = {};
+                const monthlyDistance: { [month: string]: number } = {};
+                const monthlyFuel: { [month: string]: number } = {};
+
                 records.forEach(r => {
                     const month = moment(r.date).format('YYYY-MM');
                     monthlyExpenses[month] = (monthlyExpenses[month] || 0) + (r.fuelConsumed * r.fuelPrice);
+                    monthlyDistance[month] = (monthlyDistance[month] || 0) + (r.odometerEnd - r.odometerStart);
+                    monthlyFuel[month] = (monthlyFuel[month] || 0) + r.fuelConsumed;
                 });
 
-                return { avgFuelConsumption, lastFuelConsumption, monthlyExpenses };
+                Object.keys(monthlyDistance).forEach(month => {
+                    monthlyMileage[month] = monthlyDistance[month] / monthlyFuel[month];
+                });
+
+                return { avgFuelConsumption, lastFuelConsumption, monthlyExpenses, monthlyMileage };
             },
         }),
         {
